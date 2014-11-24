@@ -1,1 +1,5 @@
 C:\Users\Technologist\Documents\GitHub\Battleship\Battleship\Battleship\bin\Debug\Battleship.exe.config
+C:\Users\Technologist\Documents\GitHub\Battleship\Battleship\Battleship\bin\Debug\Battleship.exe
+C:\Users\Technologist\Documents\GitHub\Battleship\Battleship\Battleship\bin\Debug\Battleship.pdb
+C:\Users\Technologist\Documents\GitHub\Battleship\Battleship\Battleship\obj\Debug\Battleship.exe
+C:\Users\Technologist\Documents\GitHub\Battleship\Battleship\Battleship\obj\Debug\Battleship.pdb
