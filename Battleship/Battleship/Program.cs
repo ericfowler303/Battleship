@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Battleship
@@ -11,7 +12,7 @@ namespace Battleship
         static void Main(string[] args)
         {
             BattleShipGame game = new BattleShipGame(10,10);
-
+            game.PlayGame();
 
             Console.ReadKey();
         }
@@ -20,6 +21,7 @@ namespace Battleship
 
     class BattleShipGame
     {
+        private string userMessage = string.Empty;
         private int GridX { get; set; }
         private int GridY { get; set; }
         List<Ship> listOfShips = new List<Ship>();
@@ -37,8 +39,54 @@ namespace Battleship
             // Init ships
             InitShips();
         }
+
+        public void PlayGame()
+        {
+            List<string> splitInput = new List<string>();
+            
+            // Keep playing the game until all ships have been destroyed
+            while (listOfShips.Any(x => x.isDestroyed == false))
+            {
+                // Set to -1 to use as a filter to see if there was good user input
+                int userX = -1;
+                int userY = -1;
+
+                // Draw the grid
+                DrawGrid();
+
+                // Print the user a message about recent sinkings if there is one
+                if (userMessage != string.Empty) { Console.WriteLine(userMessage); }
+
+                // Get user input in the form of x,y
+                // Use .Replace and .Split to sanatize user input
+                Console.Write("Please input new x,y coordinates to hit. EX. x,y : ");
+                string userInput = Console.ReadLine();
+                if(userInput.Contains(',')){
+                    // Mabye valid input
+                    splitInput = userInput.Replace(" ", string.Empty).Split(',').ToList();
+                }
+                else if (splitInput.Count == 2 && Regex.IsMatch(splitInput[0], @"^\d+$") && Regex.IsMatch(splitInput[1], @"^\d+$"))
+                {
+                    // Proper input
+                    userX = int.Parse(splitInput[0]);
+                    userY = int.Parse(splitInput[1]);
+                } else {
+                    // Invalid input, let the user see this then restart the turn
+                    Console.WriteLine("Invalid Input");
+                    System.Threading.Thread.Sleep(1500);
+                }
+
+                // if we have valid userinput (userX & userY)
+                // add their move and see if they hit anything
+                if (userX != -1 && userY != -1) { userMoves.Add(new Point(userX, userY)); }
+            }
+
+            // End of game
+
+        }
         public void DrawGrid()
         {
+            Console.Clear();
             // Loop through every coordinate in the grid
             for (int y = 0; y < GridY; y++)
             {
