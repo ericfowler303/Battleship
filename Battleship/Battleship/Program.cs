@@ -64,13 +64,14 @@ namespace Battleship
                 if(userInput.Contains(',')){
                     // Mabye valid input
                     splitInput = userInput.Replace(" ", string.Empty).Split(',').ToList();
+                    if (splitInput.Count == 2 && Regex.IsMatch(splitInput[0], @"^\d+$") && Regex.IsMatch(splitInput[1], @"^\d+$"))
+                    {
+                        // Proper input
+                        userX = int.Parse(splitInput[0]);
+                        userY = int.Parse(splitInput[1]);
+                    } 
                 }
-                else if (splitInput.Count == 2 && Regex.IsMatch(splitInput[0], @"^\d+$") && Regex.IsMatch(splitInput[1], @"^\d+$"))
-                {
-                    // Proper input
-                    userX = int.Parse(splitInput[0]);
-                    userY = int.Parse(splitInput[1]);
-                } else {
+                else {
                     // Invalid input, let the user see this then restart the turn
                     Console.WriteLine("Invalid Input");
                     System.Threading.Thread.Sleep(1500);
@@ -78,7 +79,7 @@ namespace Battleship
 
                 // if we have valid userinput (userX & userY)
                 // add their move and see if they hit anything
-                if (userX != -1 && userY != -1) { userMoves.Add(new Point(userX, userY)); }
+                if (userX != -1 && userY != -1) { userMoves.Add(new Point(userX, userY)); CombatRound++; }
             }
 
             // End of game
