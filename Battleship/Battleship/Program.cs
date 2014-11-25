@@ -214,7 +214,6 @@ namespace Battleship
 
         public ShipType Type { get; set; }
         public List<Point> occupiedPoints = new List<Point>();
-        private int _length;
 
         public int Length
         {
@@ -238,12 +237,44 @@ namespace Battleship
         }
     }
 
-    class Point {
+    class Point : IEquatable<Point>
+    {
         public int xVal { get; set; }
         public int yVal { get; set; }
         public Point(int x, int y) {
             this.xVal = x;
             this.yVal = y;
+        }
+
+       
+        /// <summary>
+        ///  Equal method is needed for IEquatable
+        ///  This is needed to compare Points using Intersect
+        /// </summary>
+        /// <param name="otherPoint">The other Point to compare</param>
+        /// <returns>true if the x and y values are the same</returns>
+        public bool Equals(Point otherPoint)
+        {
+            //Check whether the compared object is null.
+            if (Object.ReferenceEquals(otherPoint, null)) return false;
+
+            //Check whether the compared object references the same data.
+            if (Object.ReferenceEquals(this, otherPoint)) return true;
+
+            //Check whether the products' properties are equal.
+            return this.xVal.Equals(otherPoint.xVal) && this.yVal.Equals(otherPoint.yVal);
+        }
+
+        // If Equals() returns true for a pair of objects 
+        // then GetHashCode() must return the same value for these objects.
+        public override int GetHashCode()
+        {
+            //Get hash code for the Name field if it is not null.
+            int hashXVal = xVal.GetHashCode();
+            int hashYVal = yVal.GetHashCode();
+
+            //Calculate the hash code for the Point
+            return hashXVal ^ hashYVal;
         }
     }
 }
