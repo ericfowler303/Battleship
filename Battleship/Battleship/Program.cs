@@ -12,6 +12,7 @@ namespace Battleship
         {
             BattleShipGame game = new BattleShipGame(10,10);
 
+
             Console.ReadKey();
         }
 
@@ -22,23 +23,21 @@ namespace Battleship
         private int GridX { get; set; }
         private int GridY { get; set; }
         List<Ship> listOfShips = new List<Ship>();
-        List<Point> UserMoves = new List<Point>();
+        List<Point> userMoves = new List<Point>();
         public bool AllShipsDestroyed
         {
             get{return listOfShips.All(x => x.isDestroyed == true);}
         }
         public int CombatRound { get; set; }
+
         public BattleShipGame(int xLength, int yLength)
         {
             this.GridX = xLength;
             this.GridY = yLength;
             // Init ships
             InitShips();
-
-            DrawGrid();
-
         }
-        private void DrawGrid()
+        public void DrawGrid()
         {
             // Loop through every coordinate in the grid
             for (int y = 0; y < GridY; y++)
@@ -46,10 +45,20 @@ namespace Battleship
                 for (int x = 0; x < GridX; x++)
                 {
                     // Figure out if any ship or user action is in this coordinate
-                    if (IsShipHere(x,y))
+                    if (IsShipHere(x, y) && IsUserMoveHere(x, y))
                     {
-                        // Is a ship here
-                        Console.Write("[x]");
+                        // User hit
+                        Console.Write("[X]");
+                    }
+                    else if (!IsShipHere(x, y) && IsUserMoveHere(x, y))
+                    {
+                        // User miss
+                        Console.Write("[O]");
+                    }
+                    else if (IsShipHere(x,y))
+                    {
+                        // ship here
+                        Console.Write("[_]");
 
                     } else {
                         // Nothing here
@@ -59,6 +68,11 @@ namespace Battleship
                 Console.Write("\n");
             }
             // Print status messages here
+        }
+
+        private bool IsUserMoveHere(int x, int y)
+        {
+            return userMoves.Any(b => b.xVal == x && b.yVal == y);
         }
 
         private bool IsShipHere(int x, int y)
