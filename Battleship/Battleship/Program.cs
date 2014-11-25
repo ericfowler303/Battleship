@@ -98,7 +98,7 @@ namespace Battleship
             }
 
             // End of game
-
+            Console.WriteLine("Congrats you won the game, it took {0} turns.", CombatRound);
         }
 
         public void CheckShipsForDestruction()
