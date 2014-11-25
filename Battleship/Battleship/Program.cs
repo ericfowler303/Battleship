@@ -166,10 +166,11 @@ namespace Battleship
                     }
                     /*else if (IsShipHere(x,y))
                     {
-                        // ship here
+                        // ship here for debugging purposes
                         Console.Write("[_]");
 
-                    } */else {
+                    }*/ 
+                    else {
                         // Nothing here
                         // Set the colors for every normal square
                         Console.BackgroundColor = ConsoleColor.DarkBlue;
@@ -193,40 +194,79 @@ namespace Battleship
             return listOfShips.SelectMany(a => a.occupiedPoints).Any(b => b.xVal == x && b.yVal == y);
         }
 
+        private bool IsPointOnMap(int x, int y)
+        {
+            return (x>=0 && x<this.GridX) && (y>=0 && y<this.GridY);
+        }
+
         private void InitShips()
         {
-            Ship ship1 = new Ship(Ship.ShipType.Carrier);
-            ship1.occupiedPoints.Add(new Point(0,0));
-            ship1.occupiedPoints.Add(new Point(0, 1));
-            ship1.occupiedPoints.Add(new Point(0, 2));
-            ship1.occupiedPoints.Add(new Point(0, 3));
-            ship1.occupiedPoints.Add(new Point(0, 4));
+            Random rng = new Random();
 
-            Ship ship2 = new Ship(Ship.ShipType.Battleship);
-            ship2.occupiedPoints.Add(new Point(2, 0));
-            ship2.occupiedPoints.Add(new Point(3, 0));
-            ship2.occupiedPoints.Add(new Point(4, 0));
-            ship2.occupiedPoints.Add(new Point(5, 0));
+            // Initialize each type of ship starting from largest to smallest
+            for (int i = 0; i < 5; i++)
+            {
+                bool isPlaced = false;
+                // Keep looking for a new placement for the ship until one is found
+                while (!isPlaced)
+                {
+                    Ship aShip = new Ship((Ship.ShipType)i);
+                    // Get a new random starting coordinate
+                    int startingX = rng.Next(0, this.GridX);
+                    int startingY = rng.Next(0, this.GridY);
+                    
+                    // Decide if this ship will go horizotal or vertical
+                    Ship.ShipDirecton direction = (Ship.ShipDirecton)rng.Next(2);
+                    switch (direction)
+                    {
+                        case Ship.ShipDirecton.Horizontal:
+                            int validSpaceCounterX = 0;
+                            for (int xval = startingX; xval < (startingX+aShip.Length); xval++)
+                            {
+                                // Count the spaces where there is no ship
+                                if (!IsShipHere(xval, startingY) && IsPointOnMap(xval,startingY)) { validSpaceCounterX++; }
+                            }
+                            
+                            // If the amount of valid spaces is the same as the length of the ship
+                            // then this is a valid place to put the ship
+                            if (validSpaceCounterX == aShip.Length)
+                            {
+                                // Fill in the points the ship will occupy
+                                for (int xval = startingX; xval < (startingX + aShip.Length); xval++)
+                                {
+                                    aShip.occupiedPoints.Add(new Point(xval, startingY));
+                                }
+                                // Add the completed ship to the list of ships
+                                listOfShips.Add(aShip);
+                                isPlaced = true;
+                            }                            
+                            break;
+                        case Ship.ShipDirecton.Vertical:
+                            int validSpaceCounterY = 0;
+                            for (int yval = startingY; yval < (startingY+aShip.Length); yval++)
+                            {
+                                // Count the spaces where there is no ship
+                                if (!IsShipHere(startingX, yval) && IsPointOnMap(startingX,yval)) { validSpaceCounterY++; }
+                            }
+                            
+                            // If the amount of valid spaces is the same as the length of the ship
+                            // then this is a valid place to put the ship
+                            if (validSpaceCounterY == aShip.Length)
+                            {
+                                // Fill in the points the ship will occupy
+                                for (int yval = startingY; yval < (startingY + aShip.Length); yval++)
+                                {
+                                    aShip.occupiedPoints.Add(new Point(startingX,yval));
+                                }
+                                // Add the completed ship to the list of ships
+                                listOfShips.Add(aShip);
+                                isPlaced = true;
+                            }  
+                            break;
+                    }
 
-            Ship ship3 = new Ship(Ship.ShipType.Submarine);
-            ship3.occupiedPoints.Add(new Point(1, 8));
-            ship3.occupiedPoints.Add(new Point(2, 8));
-            ship3.occupiedPoints.Add(new Point(3, 8));
-
-            Ship ship4 = new Ship(Ship.ShipType.Cruiser);
-            ship4.occupiedPoints.Add(new Point(4, 6));
-            ship4.occupiedPoints.Add(new Point(4, 7));
-            ship4.occupiedPoints.Add(new Point(4, 8));
-
-            Ship ship5 = new Ship(Ship.ShipType.Minesweeper);
-            ship5.occupiedPoints.Add(new Point(7, 4));
-            ship5.occupiedPoints.Add(new Point(7, 5));
-
-            listOfShips.Add(ship1);
-            listOfShips.Add(ship2);
-            listOfShips.Add(ship3);
-            listOfShips.Add(ship4);
-            listOfShips.Add(ship5);
+                }
+            }
         }
     }
 
@@ -235,6 +275,10 @@ namespace Battleship
         public enum ShipType
         {
             Carrier, Battleship, Cruiser, Submarine, Minesweeper
+        }
+        public enum ShipDirecton
+        {
+            Horizontal, Vertical
         }
 
         public ShipType Type { get; set; }
