@@ -64,7 +64,7 @@ namespace Battleship
 
                 // Get user input in the form of x,y
                 // Use .Replace and .Split to sanatize user input
-                Console.Write("Please input new x,y coordinates to hit. EX. x,y : ");
+                Console.Write("Please input new x,y coordinates to hit: ");
                 string userInput = Console.ReadLine();
                 if(userInput.Contains(',')){
                     // Mabye valid input
@@ -127,6 +127,7 @@ namespace Battleship
         public void DrawGrid()
         {
             Console.Clear();
+            Console.WriteLine("Battleship       Ships Remaining: {0}", listOfShips.Where(g=>g.isDestroyed == false).Count());
             // Loop through every coordinate in the grid
             for (int y = 0; y < GridY; y++)
             {
@@ -136,21 +137,45 @@ namespace Battleship
                     if (IsShipHere(x, y) && IsUserMoveHere(x, y))
                     {
                         // User hit
-                        Console.Write("[X]");
+                        
+                        Ship shipAtCoord = listOfShips.Where(a=>a.occupiedPoints.Contains(new Point(x,y))).First();
+                        if (shipAtCoord.isDestroyed)
+                        { // Print a different color if a ship has been sunk on it's points
+                            Console.BackgroundColor = ConsoleColor.Black;
+                            Console.ForegroundColor = ConsoleColor.White;
+                            Console.Write("[X]");
+                            Console.ResetColor();
+                        }
+                        else
+                        { // Print generic hit if the ship is still floating
+                            // Set the colors for every normal square
+                            Console.BackgroundColor = ConsoleColor.DarkBlue;
+                            Console.ForegroundColor = ConsoleColor.White;
+                            Console.Write("[X]");
+                            Console.ResetColor();
+                        }
                     }
                     else if (!IsShipHere(x, y) && IsUserMoveHere(x, y))
                     {
                         // User miss
+                        // Set the colors for every normal square
+                        Console.BackgroundColor = ConsoleColor.DarkBlue;
+                        Console.ForegroundColor = ConsoleColor.White;
                         Console.Write("[O]");
+                        Console.ResetColor();
                     }
-                    else if (IsShipHere(x,y))
+                    /*else if (IsShipHere(x,y))
                     {
                         // ship here
                         Console.Write("[_]");
 
-                    } else {
+                    } */else {
                         // Nothing here
+                        // Set the colors for every normal square
+                        Console.BackgroundColor = ConsoleColor.DarkBlue;
+                        Console.ForegroundColor = ConsoleColor.White;
                         Console.Write("[ ]");
+                        Console.ResetColor();
                     }
                 }
                 Console.Write("\n");
