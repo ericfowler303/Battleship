@@ -55,7 +55,12 @@ namespace Battleship
                 DrawGrid();
 
                 // Print the user a message about recent sinkings if there is one
-                if (userMessage != string.Empty) { Console.WriteLine(userMessage); }
+                if (userMessage != string.Empty)
+                {
+                    Console.WriteLine(userMessage);
+                    System.Threading.Thread.Sleep(1500);
+                    userMessage = string.Empty;
+                }
 
                 // Get user input in the form of x,y
                 // Use .Replace and .Split to sanatize user input
@@ -79,12 +84,46 @@ namespace Battleship
 
                 // if we have valid userinput (userX & userY)
                 // add their move and see if they hit anything
-                if (userX != -1 && userY != -1) { userMoves.Add(new Point(userX, userY)); CombatRound++; }
+                if (userX != -1 && userY != -1)
+                {
+                    userMoves.Add(new Point(userX, userY)); CombatRound++;
+                    CheckShipsForDestruction();
+                }
             }
 
             // End of game
 
         }
+
+        public void CheckShipsForDestruction()
+        {
+            foreach (Ship aShip in listOfShips)
+            {
+                HasShipBeenDestroyed(aShip);
+            }
+        }
+        private void HasShipBeenDestroyed(Ship aShip)
+        {
+            // Only check a ship if it hasn't been destroyed yet
+            if (!aShip.isDestroyed)
+            {
+                // See if all of the ship's points have been hit by the user
+                if (aShip.occupiedPoints.Intersect(userMoves).Count() == aShip.Length)
+                {
+                    aShip.isDestroyed = true;
+                    // send the user a message that they destroyed this ship
+                    switch (aShip.Type)
+                    {
+                        case Ship.ShipType.Carrier: userMessage = "You just sank the Carrier"; break;
+                        case Ship.ShipType.Battleship: userMessage = "You just sank the Battleship"; break;
+                        case Ship.ShipType.Cruiser: userMessage = "You just sank the Cruiser"; break;
+                        case Ship.ShipType.Submarine: userMessage = "You just sank the Submarine"; break;
+                        case Ship.ShipType.Minesweeper: userMessage = "You just sank the Minesweeper"; break;
+                    }
+                }
+            }
+        }
+
         public void DrawGrid()
         {
             Console.Clear();
