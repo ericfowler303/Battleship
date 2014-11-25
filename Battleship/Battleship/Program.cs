@@ -84,10 +84,16 @@ namespace Battleship
 
                 // if we have valid userinput (userX & userY)
                 // add their move and see if they hit anything
-                if (userX != -1 && userY != -1)
+                if ((userX != -1 && userY != -1) && IsPointOnMap(userX, userY))
                 {
                     userMoves.Add(new Point(userX, userY)); CombatRound++;
                     CheckShipsForDestruction();
+                }
+                else
+                {
+                    // Check for x,y values that aren't on the map
+                    Console.WriteLine("Invalid Coordinates");
+                    System.Threading.Thread.Sleep(1500);
                 }
             }
 
